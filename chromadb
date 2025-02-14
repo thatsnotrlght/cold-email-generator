@@ -3,16 +3,39 @@ import chromadb
 chroma_client = chromadb.Client()
 collection = chroma_client.create_collection(name= 'test_collection')
 
-collection.add(
+
+"""collection.add(
     documents = [
-        "This is a test document about nothing",
-        "This is not a test document about everything"
+        "This is a test document about florida",
+        "This is not a test document about football"
     ],
     ids = ["id1", "id2"]
+)"""
+
+collection.add(
+    ids = ["id1", "id2"],
+    documents = [
+        "This is a test document about florida",
+        "This is not a test document about football"
+    ],
+    metadatas = [
+        {"url": "https://en.wikipedia.org/wiki/Florida"},
+        {"url": "https://en.wikipedia.org/wiki/Football"}
+    ]
 )
 
+
+
 all_docs = collection.get()
-print("All docs\n", all_docs)
+print("All docs:\n", all_docs, "\n")
 
 documents = collection.get(ids=["id1"])
-print(documents)
+print("Documents with id1:\n", documents, "\n")
+
+# Includes results with unit distance away from document using semantic search
+results = collection.query(
+    query_texts = ["This is a query document about oranges"],
+    n_results = 2
+)
+
+print("Results of query:\n", results, "\n")
