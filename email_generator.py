@@ -1,6 +1,9 @@
 from langchain_groq import ChatGroq
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import JsonOutputParser
+import pandas as pd
+
 
 llm = ChatGroq(
     temperature = 0,
@@ -29,4 +32,14 @@ prompt_extract = PromptTemplate.from_template(
 # Pipe operator to chain the response from the model to the prompt
 chain_extract = prompt_extract | llm
 chainResponse = chain_extract.invoke(input={"page_data": page_data})
-print(chainResponse.content)
+# print("\nString format response")
+# print(chainResponse.content)
+
+
+json_parser = JsonOutputParser()
+json_response = json_parser.parse(chainResponse.content)
+# print("\nJSON format response")
+# print(json_response)
+
+dataFrame = pd.read_csv("C:\\Users\\jarti\\Desktop\\cold-email-generator\\portfolios_examples.csv")
+print(dataFrame.head())
