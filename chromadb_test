@@ -1,0 +1,54 @@
+import chromadb
+import pandas as pd
+import uuid
+
+# Initializes ChromaDB PersistentClient (creates storage on disk to constantly access; csv file)
+chroma_client = chromadb.PersistentClient()
+
+# gets or creates the collection 
+collection = chroma_client.get_or_create_collection(name= 'portfolio')
+
+# loads dataframe from CSV file
+dataFrame = pd.read_csv("C:\\Users\\jarti\\Desktop\\cold-email-generator\\portfolios_examples.csv")
+
+# Add documents to the collection if it is empty
+if not collection.count():
+    for _, row in dataFrame.iterrows():
+        collection.add(
+            documents=[row["Techstack"]],
+            metadatas={"links": row["Links"]},
+            ids=[str(uuid.uuid4())]
+        )
+
+links = collection.query(query_texts=["Experience in Python", "Expertise in React Native "], n_results=2).get('metadatas',[])
+print(links)
+
+# The following code I commented out but can be used for additional operations and for personal reference
+
+# collection.add(
+#     ids = ["id1", "id2"],
+#     documents = [
+#         "This is a test document about florida",
+#         "This is not a test document about football"
+#     ],
+#     metadatas = [
+#         {"url": "https://en.wikipedia.org/wiki/Florida"},
+#         {"url": "https://en.wikipedia.org/wiki/Football"}
+#     ]
+# )
+
+# all_docs = collection.get()
+# print("All docs:\n", all_docs, "\n")
+
+# documents = collection.get(ids=["id1"])
+# print("Documents with id1:\n", documents, "\n")
+
+# # Includes results with unit distance away from document using semantic search
+# results = collection.query(
+#     query_texts = ["This is a query document about oranges"],
+#     n_results = 2
+# )
+
+# print("Results of query:\n", results, "\n")
+
+

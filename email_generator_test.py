@@ -4,19 +4,18 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 import pandas as pd
 
-
+# Initializes LLM with specified parameters
 llm = ChatGroq(
     temperature = 0,
-    groq_api_key = "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",
+    groq_api_key = "api_key",
     model_name = "llama-3.3-70b-versatile"
 )
 
-#response = llm.invoke("What is this project going to entail? ")
-# print(response.content)
-
-loader = WebBaseLoader("https://maximus.avature.net/careers/FolderDetail/United-States-Intern-IT-Software-Engineering/27568")
+# loads web page content
+loader = WebBaseLoader("https://maximus.avature.net/careers/FolderDetail/United-States-Intern-AI-Software-Engineering/28377")
 page_data = loader.load().pop().page_content
 
+# defines prompt template for extracting job posting details
 prompt_extract = PromptTemplate.from_template(
     """
     ### SCRAPED TEXT FROM WEBSITE:
@@ -41,5 +40,5 @@ json_response = json_parser.parse(chainResponse.content)
 # print("\nJSON format response")
 # print(json_response)
 
-dataFrame = pd.read_csv("C:\\Users\\jarti\\Desktop\\cold-email-generator\\portfolios_examples.csv")
-print(dataFrame.head())
+job = json_response
+print(job['skills'])
